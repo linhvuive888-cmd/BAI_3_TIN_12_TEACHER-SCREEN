@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ĐƯỜNG ĐUA MẠNG THỜI GIAN THỰC - NETWORK MISSION 12</title>
+    <style>
+        :root {
+            --bg-race: #070b14;
+            --card-race: #111827;
+            --cyan-glow: #00f2fe;
+            --yellow-glow: #ffd600;
+            --green-glow: #00e676;
+            --purple-glow: #a855f7;
+            --font: 'Segoe UI', Roboto, sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--bg-race);
+            color: #fff;
+            font-family: var(--font);
+            padding: 16px 24px;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(0, 242, 254, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(168, 85, 247, 0.12) 0%, transparent 40%);
+        }
+
+        /* HEADER TIVI */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(17, 24, 39, 0.9);
+            padding: 14px 24px;
+            border-radius: 14px;
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+            margin-bottom: 20px;
+        }
+
+        .title-box h1 {
+            font-size: 26px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00f2fe, #4facfe, #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+
+        .stats-badge {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .badge-item {
+            background: rgba(255,255,255,0.06);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.15);
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* KHUNG CHỌN LỚP & ĐIỀU KHIỂN */
+        .filter-ctrl {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        select.class-select {
+            background: #1e293b;
+            color: var(--cyan-glow);
+            border: 1px solid var(--cyan-glow);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* ĐƯỜNG ĐUA TRỰC QUAN */
+        .track-container {
+            background: rgba(17, 24, 39, 0.7);
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 20px;
+            min-height: 520px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+        }
+
+        .track-header-stations {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding: 0 100px 0 220px;
+            font-size: 13px;
+            font-weight: bold;
+            color: var(--cyan-glow);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .station-marker {
+            background: rgba(0, 242, 254, 0.15);
+            padding: 4px 10px;
+            border-radius: 12px;
+            border: 1px solid var(--cyan-glow);
+        }
+
+        .racers-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            max-height: 65vh;
+            overflow-y: auto;
+            padding-right: 6px;
+        }
+
+        /* MỖI HỌC SINH LÀ 1 LÀN ĐUA */
+        .lane-card {
+            background: #131d31;
+            border-radius: 12px;
+            padding: 10px 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.4s ease;
+        }
+
+        .lane-card:hover {
+            border-color: var(--cyan-glow);
+            transform: translateX(4px);
+        }
+
+        .student-info {
+            width: 200px;
+            flex-shrink: 0;
+        }
+
+        .student-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .student-sub {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-top: 2px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .race-bar-wrapper {
+            flex: 1;
+            position: relative;
+            background: #090e18;
+            height: 32px;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .race-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #7f00ff, #00f2fe);
+            border-radius: 16px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .racer-icon {
+            position: absolute;
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            filter: drop-shadow(0 0 8px #00f2fe);
+        }
+
+        .score-info {
+            width: 90px;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .score-val {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--yellow-glow);
+        }
+
+        .status-tag {
+            font-size: 11px;
+            color: var(--green-glow);
+            font-weight: 600;
+        }
+
+        .empty-notify {
+            text-align: center;
+            padding: 80px 20px;
+            color: #64748b;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="title-box">
+            <h1>NETWORK MISSION 12 – ĐƯỜNG ĐUA KỸ SƯ MẠNG TRẺ</h1>
+            <p style="color:#94a3b8; font-size:14px; margin-top:2px;">Môn Tin học 12 – Trực quan hóa thi đua thời gian thực</p>
+        </div>
+
+        <div class="filter-ctrl">
+            <span style="font-weight:bold; color:var(--cyan-glow);">🏫 LỌC THEO LỚP:</span>
+            <input type="text" id="class-filter" placeholder="Nhập tên lớp (VD: 12A1)..." 
+                   style="background:#1e293b; color:#fff; border:1px solid rgba(255,255,255,0.2); padding:8px 12px; border-radius:8px; outline:none; font-weight:bold;"
+                   oninput="renderDashboard()">
+        </div>
+
+        <div class="stats-badge">
+            <div class="badge-item">🟢 Đang online: <strong id="online-count" style="color:var(--cyan-glow);">0</strong> học sinh</div>
+            <div class="badge-item">🏆 Dẫn đầu: <strong id="top-racer" style="color:var(--yellow-glow);">--</strong></div>
+        </div>
+    </header>
+
+    <div class="track-container">
+        <!-- 4 CỘT MỐC TRẠM TRÊN ĐƯỜNG ĐUA -->
+        <div class="track-header-stations">
+            <span class="station-marker">🚩 Xuất phát (0%)</span>
+            <span class="station-marker">Trạm 1: Khởi động (25%)</span>
+            <span class="station-marker">Trạm 2: Khám phá (50%)</span>
+            <span class="station-marker">Trạm 3: Luyện tập (75%)</span>
+            <span class="station-marker" style="border-color:var(--green-glow); color:var(--green-glow);">🏁 Về đích (100%)</span>
+        </div>
+
+        <!-- DANH SÁCH LÀN ĐUA CỦA TỪNG HỌC SINH -->
+        <div class="racers-list" id="racers-container">
+            <div class="empty-notify">
+                ⏳ Đang chờ học sinh đăng nhập và bắt đầu bài học...<br>
+                <span style="font-size:14px; color:#475569;">(Học sinh bấm "Bắt đầu nhiệm vụ" trên link GitHub thì tên sẽ xuất hiện ngay tại đây)</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DÁN URL CỦA BẠN:
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbytUwpLIILmjOeTLGVrKE1sU-wvnvhyo3bGWxy7-2hZCBtTgUN7fv_9wpcyWHPQtxIDJA/exec";
+
+        let currentPlayers = [];
+
+        // Hàm nhận dữ liệu trả về từ Google Apps Script (JSONP Callback)
+        window.onReceiveTrackData = function(data) {
+            if (data && data.players) {
+                currentPlayers = data.players;
+                renderDashboard();
+            }
+        };
+
+        function fetchLiveTrackData() {
+            if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("https://script.google.com/macros/s/AKfycbytUwpLIILmjOeTLGVrKE1sU-wvnvhyo3bGWxy7-2hZCBtTgUN7fv_9wpcyWHPQtxIDJA/exec")) return;
+
+            // Xóa script cũ nếu có để tránh tràn bộ nhớ
+            const oldScript = document.getElementById("jsonp-fetcher");
+            if (oldScript) oldScript.remove();
+
+            // Tạo thẻ script mới để vượt qua tường lửa CORS
+            const script = document.createElement("script");
+            script.id = "jsonp-fetcher";
+            script.src = GOOGLE_SCRIPT_URL + "?callback=onReceiveTrackData&t=" + new Date().getTime();
+            document.body.appendChild(script);
+        }
+
+        function renderDashboard() {
+            const filterVal = document.getElementById("class-filter").value.trim().toLowerCase();
+            const container = document.getElementById("racers-container");
+
+            let list = currentPlayers;
+            if (filterVal) {
+                list = list.filter(p => (p.className || "").toLowerCase().includes(filterVal));
+            }
+
+            list.sort((a, b) => (b.score - a.score) || (b.progress - a.progress));
+
+            document.getElementById("online-count").textContent = list.length;
+            document.getElementById("top-racer").textContent = list.length > 0 ? `${list[0].name} (${list[0].score}đ)` : "--";
+
+            if (list.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-notify">
+                        ⏳ Đang chờ học sinh đăng nhập...<br>
+                        <span style="font-size:14px; color:#475569;">(Dữ liệu đang kết nối trực tiếp với Google Sheets)</span>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = list.map((p, index) => {
+                const isTop1 = (index === 0 && p.score > 0);
+                const racerIcon = isTop1 ? "🚀" : (p.progress >= 100 ? "🏁" : "🏎️");
+                const progressWidth = Math.min(100, Math.max(4, p.progress || 0));
+
+                return `
+                    <div class="lane-card">
+                        <div class="student-info">
+                            <div class="student-name" title="${p.name}">
+                                ${isTop1 ? '👑 ' : ''}${p.name}
+                            </div>
+                            <div class="student-sub">
+                                <span>🏫 ${p.className}</span>
+                                <span style="color:var(--cyan-glow);">${p.station || 'Trạm 1'}</span>
+                            </div>
+                        </div>
+
+                        <div class="race-bar-wrapper">
+                            <div class="race-bar-fill" style="width: ${progressWidth}%;">
+                                <span class="racer-icon">${racerIcon}</span>
+                            </div>
+                        </div>
+
+                        <div class="score-info">
+                            <div class="score-val">${p.score}đ</div>
+                            <div class="status-tag">${p.status || 'Đang đua'}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Tự động kéo dữ liệu mỗi 3 giây
+        setInterval(fetchLiveTrackData, 3000);
+        fetchLiveTrackData();
+    </script>
+</body>
+</html>
